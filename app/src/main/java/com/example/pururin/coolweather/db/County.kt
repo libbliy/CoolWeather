@@ -7,7 +7,7 @@ import org.litepal.crud.DataSupport
  */
 class County : DataSupport() {
     var id: Int? = null
-    var mCountyName:String?=null
+    lateinit var mCountyName:String
     var mWeatherId:String?=null
     var mCityId:Int?=null
 

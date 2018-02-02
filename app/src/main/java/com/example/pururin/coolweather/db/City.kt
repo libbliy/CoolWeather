@@ -7,8 +7,8 @@ import org.litepal.crud.DataSupport
  */
 class City : DataSupport() {
     var id: Int? = null
-    var mCityName:String?=null
-    var mCityCode:Int?=null
+    lateinit var mCityName:String
+    var mCityCode:Int=0
 
     var mProvinceId:Int?=null
 
