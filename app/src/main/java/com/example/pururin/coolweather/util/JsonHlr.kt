@@ -16,9 +16,12 @@ class JsonHlr {
                 try {
                     for (i in 0 until allProvince.length()) {
                         val provinceObject = allProvince.getJSONObject(i)
-                        val province = Province()
-                        province.mProvinceName=provinceObject.getString("name")
-                        province.mProvinceCode=provinceObject.getInt("id")
+                        val province = Province(mapOf(
+                                "mProvinceName" to provinceObject.getString("name"),
+                                "mProvinceCode" to provinceObject.getInt("id")
+                         ))
+
+
                         province.save()
                     }
                     return true
