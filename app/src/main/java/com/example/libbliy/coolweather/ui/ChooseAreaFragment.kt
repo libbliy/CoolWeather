@@ -1,21 +1,17 @@
-package com.example.pururin.coolweather.ui
+package com.example.libbliy.coolweather.ui
 
-import android.app.Activity
 import android.app.Fragment
-import android.app.ProgressDialog
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.example.pururin.coolweather.R
-import com.example.pururin.coolweather.db.City
-import com.example.pururin.coolweather.db.County
-import com.example.pururin.coolweather.db.Province
-import com.example.pururin.coolweather.util.HttpUtil
-import com.example.pururin.coolweather.util.JsonHlr
-import kotlinx.android.synthetic.main.choose_area.*
+import com.example.libbliy.coolweather.R
+import com.example.libbliy.coolweather.db.City
+import com.example.libbliy.coolweather.db.County
+import com.example.libbliy.coolweather.db.Province
+import com.example.libbliy.coolweather.util.HttpUtil
+import com.example.libbliy.coolweather.util.JsonHlr
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -27,8 +23,8 @@ import java.io.IOException
  */
 class ChooseAreaFragment : Fragment() {
 
-//    private var progressDialog = ProgressDialog(activity)
-    private var titleText: TextView? = null
+    private lateinit var progressBar:ProgressBar //'ProgressDialog' is deprecated. Deprecated in Java
+    private lateinit var titleText: TextView
     private lateinit var backButton: Button
     private lateinit var listView: ListView
 
@@ -40,16 +36,17 @@ class ChooseAreaFragment : Fragment() {
     private lateinit var cityList: List<City>
     private lateinit var countyList: List<County>
 
-    private var selectedProvince: Province? = null
-    private var selectedCity: City? = null
-    private var selectedCounty: County? = null
-    private var currentLevel: Int? = null
+    private lateinit var selectedProvince: Province
+    private lateinit var selectedCity: City
+    private lateinit var selectedCounty: County
+    private var currentLevel: Int = 0
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         var view: View = inflater!!.inflate(R.layout.choose_area, container, false)
         titleText = view.findViewById(R.id.title_text)
         backButton = view.findViewById(R.id.back_button)
         listView = view.findViewById(R.id.list_view)
+        progressBar=view.findViewById(R.id.progress_bar)
         adapter = ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, dataList)
         listView.adapter = adapter
         return view
@@ -89,12 +86,12 @@ class ChooseAreaFragment : Fragment() {
     }
 
     private fun queryProvinces() {
-        titleText?.text = "中国"
+        titleText.text = "中国"
         backButton.visibility = View.GONE
         //DataSupport.deleteAll(Province::class.java)
         provinceList = DataSupport.findAll(Province::class.java)
 
-        if (provinceList.size >0) {
+        if (provinceList.size > 0) {
             dataList.clear()
             for (province in provinceList) {
                 dataList.add(province.mProvinceName)
@@ -105,16 +102,14 @@ class ChooseAreaFragment : Fragment() {
         } else {
             val address = "http://guolin.tech/api/china"
             queryFromServer(address, "province")
-            Log.w("test","asd")
 
         }
     }
 
     private fun queryCities() {
-        Log.d("City","start")
-        titleText?.text = selectedProvince?.mProvinceName
+        titleText.text = selectedProvince.mProvinceName
         backButton.visibility = View.VISIBLE
-        cityList = DataSupport.where("mprovinceid=?", selectedProvince?.mProvinceCode.toString()).find(City::class.java)
+        cityList = DataSupport.where("mprovinceid=?", selectedProvince.mProvinceCode.toString()).find(City::class.java)
         if (cityList.size > 0) {
             dataList.clear()
             for (cityList in cityList) {
@@ -124,7 +119,7 @@ class ChooseAreaFragment : Fragment() {
             listView.setSelection(0)
             currentLevel = LENCEL_CITY
         } else {
-            val provinceCode = selectedProvince?.mProvinceCode
+            val provinceCode = selectedProvince.mProvinceCode
             val address = "http://guolin.tech/api/china/" + provinceCode
             queryFromServer(address, "city")
 
@@ -132,10 +127,9 @@ class ChooseAreaFragment : Fragment() {
     }
 
     private fun queryCounties() {
-        Log.d("County","start")
-        titleText?.text = selectedCity?.mCityName
+        titleText.text = selectedCity.mCityName
         backButton.visibility = View.VISIBLE
-        countyList = DataSupport.where("mcityid=?", selectedCity?.mCityCode.toString()).find(County::class.java)
+        countyList = DataSupport.where("mcityid=?", selectedCity.mCityCode.toString()).find(County::class.java)
         if (countyList.size > 0) {
             dataList.clear()
             for (couty in countyList) {
@@ -145,17 +139,8 @@ class ChooseAreaFragment : Fragment() {
             listView.setSelection(0)
             currentLevel = LENCEL_COUNTY
         } else {
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            Log.w("asd","dasdas")
-            val provinceCode = selectedProvince?.mProvinceCode
-            val cityCode = selectedCity?.mCityCode
+            val provinceCode = selectedProvince.mProvinceCode
+            val cityCode = selectedCity.mCityCode
             val address = "http://guolin.tech/api/china/" + provinceCode + "/" + cityCode
             queryFromServer(address, "county")
 
@@ -163,12 +148,14 @@ class ChooseAreaFragment : Fragment() {
     }
 
     private fun queryFromServer(address: String, type: String) {
-       // showProgessDiaLog()
+        // showProgessBar
+        progressBar.visibility=View.VISIBLE
         HttpUtil.sendOkHttpRequst(address, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 activity.runOnUiThread(object : Runnable {
                     override fun run() {
-                       // closeProgressDialog()
+                        // closeProgressBar
+                        progressBar.visibility=View.GONE
                         Toast.makeText(context, "加载失败", Toast.LENGTH_SHORT).show()
                     }
 
@@ -179,14 +166,16 @@ class ChooseAreaFragment : Fragment() {
                 val responseText = response?.body()!!.string()
                 var result = when (type) {
                     "province" -> JsonHlr.hdlResponseProvince(responseText)
-                    "city" -> JsonHlr.hdlResponseCity(responseText, selectedProvince!!.mProvinceCode)
-                    "county" -> JsonHlr.hdlResponseCounty(responseText, selectedCity!!.mCityCode)
+                    "city" -> JsonHlr.hdlResponseCity(responseText, selectedProvince.mProvinceCode)
+                    "county" -> JsonHlr.hdlResponseCounty(responseText, selectedCity.mCityCode)
                     else -> false
                 }
                 if (result) {
                     activity.runOnUiThread(object : Runnable {
                         override fun run() {
-                         //   closeProgressDialog()
+                            //
+                            //  closeProgressBar
+                            progressBar.visibility=View.GONE
                             when (type) {
                                 "province" -> queryProvinces()
                                 "city" -> queryCities()
@@ -202,18 +191,6 @@ class ChooseAreaFragment : Fragment() {
 
         })
     }
-
-//    private fun closeProgressDialog() {
-//
-//        progressDialog.dismiss()
-//
-//    }
-//
-//    private fun showProgessDiaLog() {
-//        progressDialog.setMessage("正在加载...")
-//        progressDialog.setCanceledOnTouchOutside(false)
-//        progressDialog.show()
-//    }
 
 
     companion object {

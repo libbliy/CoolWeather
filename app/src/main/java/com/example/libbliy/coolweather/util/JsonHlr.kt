@@ -1,9 +1,8 @@
-package com.example.pururin.coolweather.util
+package com.example.libbliy.coolweather.util
 
-import android.util.Log
-import com.example.pururin.coolweather.db.City
-import com.example.pururin.coolweather.db.County
-import com.example.pururin.coolweather.db.Province
+import com.example.libbliy.coolweather.db.City
+import com.example.libbliy.coolweather.db.County
+import com.example.libbliy.coolweather.db.Province
 import org.json.JSONArray
 
 /**
@@ -17,17 +16,14 @@ class JsonHlr {
 
             if (!response.isEmpty()) {
                 val allProvince = JSONArray(response)
-                Log.d("allprovince",allProvince.toString())
                 try {
                     for (i in 0 until allProvince.length()) {
                         val provinceObject = allProvince.getJSONObject(i)
                         val province = Province()
                         province.mProvinceName= provinceObject.getString("name")
                         province.mProvinceCode = provinceObject.getInt("id")
-                        Log.d("provinceObject",provinceObject.toString())
+                        province.save()
 
-                        val flag = province.save()
-                        println(flag)
                     }
                     return true
                 } catch (e: Exception) {

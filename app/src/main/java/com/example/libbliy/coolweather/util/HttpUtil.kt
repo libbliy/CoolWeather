@@ -1,4 +1,4 @@
-package com.example.pururin.coolweather.util
+package com.example.libbliy.coolweather.util
 
 import okhttp3.Callback
 import okhttp3.OkHttpClient
@@ -11,7 +11,7 @@ class HttpUtil {
     companion object {
         fun sendOkHttpRequst(address: String,callback: Callback) {
             val okHttpClient = OkHttpClient()
-            var request = Request.Builder().url(address).build()
+            val request = Request.Builder().url(address).build()
             okHttpClient.newCall(request).enqueue(callback)
 
 

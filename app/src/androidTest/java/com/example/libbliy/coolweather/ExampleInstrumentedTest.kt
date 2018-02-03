@@ -1,4 +1,4 @@
-package com.example.pururin.coolweather
+package com.example.libbliy.coolweather
 
 import android.support.test.InstrumentationRegistry
 import android.support.test.runner.AndroidJUnit4

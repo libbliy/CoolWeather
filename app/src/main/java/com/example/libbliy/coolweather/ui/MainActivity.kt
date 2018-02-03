@@ -1,8 +1,8 @@
-package com.example.pururin.coolweather.ui
+package com.example.libbliy.coolweather.ui
 
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
-import com.example.pururin.coolweather.R
+import com.example.libbliy.coolweather.R
 
 class MainActivity : AppCompatActivity() {
 
