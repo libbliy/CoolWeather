@@ -2,6 +2,7 @@ package com.example.libbliy.coolweather.ui
 
 import android.app.Fragment
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -163,7 +164,9 @@ class ChooseAreaFragment : Fragment() {
             }
 
             override fun onResponse(call: Call?, response: Response?) {
+                Log.w("response",response.toString())
                 val responseText = response?.body()!!.string()
+                Log.w("response", responseText)
                 var result = when (type) {
                     "province" -> JsonHlr.hdlResponseProvince(responseText)
                     "city" -> JsonHlr.hdlResponseCity(responseText, selectedProvince.mProvinceCode)
