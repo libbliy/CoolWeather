@@ -7,7 +7,7 @@ class AQI {
     lateinit var city: AQICity
 
     class AQICity {
-        lateinit var api:String
+        lateinit var aqi:String
         lateinit var pm25:String
     }
 }

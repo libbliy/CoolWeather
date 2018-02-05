@@ -3,7 +3,6 @@ package com.example.libbliy.coolweather.ui
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.text.BoringLayout
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.LinearLayout
@@ -15,7 +14,6 @@ import com.example.libbliy.coolweather.gson.Weather
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
 import kotlinx.android.synthetic.main.activity_weather.*
-import kotlinx.android.synthetic.main.suggestion.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -61,18 +59,18 @@ class WeatherActivity : AppCompatActivity() {
             showWeatherInfo(weather)
 
         } else {
-            val weatherId = intent.getStringArrayExtra("weather_id").toString()
+            val weatherId = intent.getStringExtra("weather_id")
             weather_layout.visibility = View.INVISIBLE
             requestWeather(weatherId)
         }
     }
 
     private fun requestWeather(weatherId: String) {
-        val weatherUri = "http://guolin.tech/aqi/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
+        val weatherUri = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
         HttpUtil.sendOkHttpRequst(weatherUri, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
-                runOnUiThread(object: Runnable {
+                runOnUiThread(object : Runnable {
                     override fun run() {
                         Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
                     }
@@ -96,16 +94,16 @@ class WeatherActivity : AppCompatActivity() {
                 })
             }
 
-        })
+        })                  
 
     }
 
     private fun showWeatherInfo(weather: Weather) {
-        val cityName = weather.base.cityName
-        val updateTime = weather.base.update.updateTime.split(" ")[1]
-        val degree = weather.now.temperature + "C"
+        val cityName = weather.basic.cityName
+        val updateTime = weather.basic.update.updateTime.split(" ")[1]
+        val degree = weather.now.temperature + "℃"
         val weatherInfo = weather.now.more.info
-        titleCity.setText(cityName )
+        titleCity.setText(cityName)
         titleUpdateTime.setText(updateTime)
         degreeText.setText(degree)
         weatherInfoText.setText(weatherInfo)
@@ -124,7 +122,7 @@ class WeatherActivity : AppCompatActivity() {
             forecastLayout.addView(view)
         }
         if (weather.aqi != null) {
-            aqiText.setText(weather.aqi.city.api)
+            aqiText.setText(weather.aqi.city.aqi)
             pm25Text.setText(weather.aqi.city.pm25)
         }
 
@@ -134,6 +132,6 @@ class WeatherActivity : AppCompatActivity() {
         comfortText.setText(comfort)
         carWashText.setText(carWash)
         sportText.setText(sport)
-        weatherLayout.visibility=View.VISIBLE
+        weatherLayout.visibility = View.VISIBLE
     }
 }

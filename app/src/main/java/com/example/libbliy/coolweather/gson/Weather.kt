@@ -7,7 +7,7 @@ import com.google.gson.annotations.SerializedName
  */
 class Weather {
     lateinit var status: String
-    lateinit var base: Base
+    lateinit var basic: Basic
     lateinit var aqi: AQI
     lateinit var now: Now
     lateinit var suggestion: Suggestion

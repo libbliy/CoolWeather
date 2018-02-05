@@ -9,7 +9,7 @@ import javax.sql.StatementEvent
 class Now {
     @SerializedName("tmp")
     lateinit var temperature: String
-    @SerializedName("tmp")
+    @SerializedName("cond")
     lateinit var more: More
 
     class More {

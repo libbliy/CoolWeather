@@ -1,6 +1,7 @@
 package com.example.libbliy.coolweather.ui
 
 import android.app.Fragment
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -66,6 +67,13 @@ class ChooseAreaFragment : Fragment() {
                 } else if (currentLevel == LENCEL_CITY) {
                     selectedCity = cityList.get(position)
                     queryCounties()
+                }else if (currentLevel == LENCEL_COUNTY) {
+                    selectedCounty=countyList.get(position)
+                    val weatherId = selectedCounty.mWeatherId
+                    val intent = Intent(activity, WeatherActivity::class.java)
+                    intent.putExtra("weather_id",weatherId )
+                    startActivity(intent)
+                    activity.finish()
                 }
             }
 

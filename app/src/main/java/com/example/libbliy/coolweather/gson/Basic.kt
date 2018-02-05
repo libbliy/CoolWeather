@@ -5,7 +5,7 @@ import com.google.gson.annotations.SerializedName
 /**
  * Created by libbliy on 2018/2/3.
  */
-class Base {
+class Basic {
     @SerializedName("city")
     lateinit var cityName: String
 

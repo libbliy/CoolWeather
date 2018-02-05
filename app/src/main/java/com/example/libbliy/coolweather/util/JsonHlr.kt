@@ -86,11 +86,11 @@ class JsonHlr {
         }
 
         fun halResponseWeather(response: String): Weather {
-            Log.i("weatherResponse",response)
+            Log.w("weatherResponse",response)
             val jsonObject = JSONObject(response)
             val jsonArray = jsonObject.getJSONArray("HeWeather")
             val weatherContent = jsonArray.getJSONObject(0).toString()
-            Log.i("weatherCOUNT",weatherContent)
+            Log.w("weatherCOUNT",weatherContent)
             return Gson().fromJson(weatherContent, Weather::class.java)
         }
 
