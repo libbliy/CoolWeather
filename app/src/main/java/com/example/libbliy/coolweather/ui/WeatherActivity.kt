@@ -1,5 +1,6 @@
 package com.example.libbliy.coolweather.ui
 
+import android.content.Intent
 import android.graphics.Color
 import android.os.Build
 import android.support.v7.app.AppCompatActivity
@@ -16,6 +17,7 @@ import android.widget.*
 import com.bumptech.glide.Glide
 import com.example.libbliy.coolweather.R
 import com.example.libbliy.coolweather.gson.Weather
+import com.example.libbliy.coolweather.service.AutoUpdateService
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
 import kotlinx.android.synthetic.main.activity_weather.*
@@ -205,5 +207,8 @@ class WeatherActivity : AppCompatActivity() {
         carWashText.text = carWash
         sportText.text = sport
         weatherLayout.visibility = View.VISIBLE
+
+        val intent = Intent(this, AutoUpdateService::class.java)
+        startService(intent)
     }
 }
