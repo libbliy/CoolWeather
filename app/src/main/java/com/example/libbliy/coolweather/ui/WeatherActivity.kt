@@ -139,6 +139,7 @@ class WeatherActivity : AppCompatActivity() {
 
     fun requestWeather(weatherId: String) {
         val weatherUri = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
+        mWeatherId=weatherId
         HttpUtil.sendOkHttpRequst(weatherUri, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
