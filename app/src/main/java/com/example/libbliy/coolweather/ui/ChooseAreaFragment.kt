@@ -14,6 +14,7 @@ import com.example.libbliy.coolweather.db.County
 import com.example.libbliy.coolweather.db.Province
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
+import kotlinx.android.synthetic.main.activity_weather.*
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.Response
@@ -70,10 +71,17 @@ class ChooseAreaFragment : Fragment() {
                 }else if (currentLevel == LENCEL_COUNTY) {
                     selectedCounty=countyList.get(position)
                     val weatherId = selectedCounty.mWeatherId
-                    val intent = Intent(activity, WeatherActivity::class.java)
-                    intent.putExtra("weather_id",weatherId )
-                    startActivity(intent)
-                    activity.finish()
+                    if (activity is MainActivity) {
+                        val intent = Intent(activity, WeatherActivity::class.java)
+                        intent.putExtra("weather_id",weatherId )
+                        startActivity(intent)
+                        activity.finish()
+                    }else if (activity is WeatherActivity) {
+                        val activity = activity as WeatherActivity
+                        activity.drawer_layout.closeDrawers()
+                        activity.swipe_refresh.isRefreshing=true
+                        activity.requestWeather(weatherId)
+                    }
                 }
             }
 

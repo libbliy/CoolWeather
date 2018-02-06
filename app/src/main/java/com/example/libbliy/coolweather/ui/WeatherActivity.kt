@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.annotation.ColorRes
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
+import android.support.v4.widget.SwipeRefreshLayout
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +39,10 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var sportText: TextView
     private lateinit var forecastLayout: LinearLayout
     private lateinit var bingPicImg: ImageView
+    private lateinit var swipeRefreshLayout: SwipeRefreshLayout
+    private lateinit var mWeatherId:String
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var navButton: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -62,26 +69,48 @@ class WeatherActivity : AppCompatActivity() {
         sportText = findViewById(R.id.sport_text)
         forecastLayout = findViewById(R.id.forecast_layout)
         bingPicImg = findViewById(R.id.bing_pic_img)
+        swipeRefreshLayout=findViewById(R.id.swipe_refresh)
+        swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary)
+        drawerLayout=findViewById(R.id.drawer_layout)
+        navButton=findViewById(R.id.nav_button)
+
+        
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val weatherString = preferences.getString("weather", null)
         if (weatherString != null) {
             //有缓存直接解析天气数据
             val weather = JsonHlr.halResponseWeather(weatherString)
+            mWeatherId=weather.basic.weatherId
             showWeatherInfo(weather)
 
         } else {
-            val weatherId = intent.getStringExtra("weather_id")
+            mWeatherId = intent.getStringExtra("weather_id")
             weather_layout.visibility = View.INVISIBLE
-            requestWeather(weatherId)
+            requestWeather(mWeatherId)
         }
+        swipeRefreshLayout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener {
+            override fun onRefresh() {
+                requestWeather(mWeatherId)
+                Toast.makeText(this@WeatherActivity,"已刷新",Toast.LENGTH_SHORT).show()
+
+            }
+        })
         val bingPic = preferences.getString("bing_pic_img", null)
         if (bingPic != null) {
             Glide.with(this).load(bingPic).into(bingPicImg)
+            Log.w("bingPic",bingPic)
 
         } else {
             loadBingPic()
         }
+        navButton.setOnClickListener(object: View.OnClickListener {
+            override fun onClick(v: View?) {
+                drawerLayout.openDrawer(GravityCompat.START)
+            }
+        })
+
+        
     }
 
     private fun loadBingPic() {
@@ -93,6 +122,7 @@ class WeatherActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call?, response: Response?) {
                 val bingPic = response?.body()?.string()
+                 Log.w("bingPic",bingPic)   
                 val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
                 editor.putString("bing_pic", bingPic)
                 editor.apply()
@@ -105,7 +135,7 @@ class WeatherActivity : AppCompatActivity() {
         })
     }
 
-    private fun requestWeather(weatherId: String) {
+    fun requestWeather(weatherId: String) {
         val weatherUri = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
         HttpUtil.sendOkHttpRequst(weatherUri, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
@@ -113,6 +143,7 @@ class WeatherActivity : AppCompatActivity() {
                 runOnUiThread(object : Runnable {
                     override fun run() {
                         Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
+                        swipeRefreshLayout.isRefreshing=false
                     }
                 })
             }
@@ -127,6 +158,7 @@ class WeatherActivity : AppCompatActivity() {
                             editor.putString("weather", response)
                             editor.apply()
                             showWeatherInfo(responseWeather)
+                            swipeRefreshLayout.isRefreshing=false 
                         } else {
                             Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
                         }
