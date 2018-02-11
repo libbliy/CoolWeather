@@ -3,13 +3,12 @@ package com.example.libbliy.coolweather.ui
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
-import android.support.annotation.ColorRes
 import android.support.v4.view.GravityCompat
 import android.support.v4.widget.DrawerLayout
 import android.support.v4.widget.SwipeRefreshLayout
+import android.support.v7.app.AppCompatActivity
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -91,13 +90,11 @@ class WeatherActivity : AppCompatActivity() {
             weather_layout.visibility = View.INVISIBLE
             requestWeather(mWeatherId)
         }
-        swipeRefreshLayout.setOnRefreshListener(object: SwipeRefreshLayout.OnRefreshListener {
-            override fun onRefresh() {
+        swipeRefreshLayout.setOnRefreshListener{
                 requestWeather(mWeatherId)
                 Toast.makeText(this@WeatherActivity,"已刷新",Toast.LENGTH_SHORT).show()
-
             }
-        })
+
         val bingPic = preferences.getString("bing_pic_img", null)
         if (bingPic != null) {
             Glide.with(this).load(bingPic).into(bingPicImg)
@@ -106,18 +103,14 @@ class WeatherActivity : AppCompatActivity() {
         } else {
             loadBingPic()
         }
-        navButton.setOnClickListener(object: View.OnClickListener {
-            override fun onClick(v: View?) {
-                drawerLayout.openDrawer(GravityCompat.START)
-            }
-        })
+        navButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
 
-        
+
     }
 
     private fun loadBingPic() {
         val requestBingPic = "http://guolin.tech/api/bing_pic"
-        HttpUtil.sendOkHttpRequst(requestBingPic, object : Callback {
+        HttpUtil.sendOkHttpRequest(requestBingPic, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
             }
@@ -128,45 +121,37 @@ class WeatherActivity : AppCompatActivity() {
                 val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
                 editor.putString("bing_pic", bingPic)
                 editor.apply()
-                runOnUiThread(object : Runnable {
-                    override fun run() {
-                        Glide.with(this@WeatherActivity).load(bingPic).into(bingPicImg)
-                    }
-                })
+                runOnUiThread { Glide.with(this@WeatherActivity).load(bingPic).into(bingPicImg) }
             }
         })
     }
 
     fun requestWeather(weatherId: String) {
-        val weatherUri = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
+        val weatherUri = "http://guolin.tech/api/weather?cityid=$weatherId&key=b96e6305b42c45e6a54b52b6bace3867"
         mWeatherId=weatherId
-        HttpUtil.sendOkHttpRequst(weatherUri, object : Callback {
+        HttpUtil.sendOkHttpRequest(weatherUri, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
-                runOnUiThread(object : Runnable {
-                    override fun run() {
-                        Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
-                        swipeRefreshLayout.isRefreshing=false
-                    }
-                })
+                runOnUiThread {
+                    Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
+                    swipeRefreshLayout.isRefreshing=false
+                }
             }
 
             override fun onResponse(call: Call?, response: Response?) {
                 val response = response?.body()!!.string()
                 val responseWeather = JsonHlr.halResponseWeather(response)
-                runOnUiThread(object : Runnable {
-                    override fun run() {
-                        if (responseWeather != null && "ok" == responseWeather.status) {
-                            val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
-                            editor.putString("weather", response)
-                            editor.apply()
-                            showWeatherInfo(responseWeather)
-                            swipeRefreshLayout.isRefreshing=false 
-                        } else {
-                            Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
-                        }
+                runOnUiThread {
+                    if ("ok" == responseWeather.status) {
+                        val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
+                        editor.putString("weather", response)
+                        editor.apply()
+                        showWeatherInfo(responseWeather)
+                        swipeRefreshLayout.isRefreshing=false
+                    } else {
+                        Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
                     }
-                })
+                }
             }
 
         })
@@ -196,10 +181,8 @@ class WeatherActivity : AppCompatActivity() {
             minText.text = forecast.temperature.min
             forecastLayout.addView(view)
         }
-        if (weather.aqi != null) {
-            aqiText.text = weather.aqi.city.aqi
-            pm25Text.text = weather.aqi.city.pm25
-        }
+        aqiText.text = weather.aqi.city.aqi
+        pm25Text.text = weather.aqi.city.pm25
 
         val comfort = "舒适度" + weather.suggestion.comfort.info
         val carWash = "洗车指数" + weather.suggestion.carWash.info

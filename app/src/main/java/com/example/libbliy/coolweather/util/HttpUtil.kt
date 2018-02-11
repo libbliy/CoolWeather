@@ -6,11 +6,11 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 
 /**
- * Created by libbliy on 2018/2/1.
- */
+* Created by libbliy on 2018/2/1.
+*/
 class HttpUtil {
     companion object {
-        fun sendOkHttpRequst(address: String,callback: Callback) {
+        fun sendOkHttpRequest(address: String, callback: Callback) {
             val okHttpClient = OkHttpClient()
             val request = Request.Builder().url(address).build()
             Log.w("request",request.toString())

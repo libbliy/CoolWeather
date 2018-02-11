@@ -5,7 +5,6 @@ import android.app.PendingIntent
 import android.app.Service
 import android.content.Context
 import android.content.Intent
-import android.content.SharedPreferences
 import android.os.IBinder
 import android.os.SystemClock
 import android.preference.PreferenceManager
@@ -38,7 +37,7 @@ class AutoUpdateService : Service() {
 
     private fun updateBingPic() {
         val requestBingPic = "http://guolin.tech/api/bing_pic"
-        HttpUtil.sendOkHttpRequst(requestBingPic,object: Callback {
+        HttpUtil.sendOkHttpRequest(requestBingPic,object: Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
             }
@@ -59,8 +58,8 @@ class AutoUpdateService : Service() {
             val weather = JsonHlr.halResponseWeather(weatherString)
             val weatherId = weather.basic.weatherId
 
-            val weatherUrl = "http://guolin.tech/api/weather?cityid=" + weatherId + "&key=b96e6305b42c45e6a54b52b6bace3867"
-            HttpUtil.sendOkHttpRequst(weatherUrl,object: Callback {
+            val weatherUrl = "http://guolin.tech/api/weather?cityid=$weatherId&key=b96e6305b42c45e6a54b52b6bace3867"
+            HttpUtil.sendOkHttpRequest(weatherUrl,object: Callback {
                 override fun onFailure(call: Call?, e: IOException?) {
                     e?.printStackTrace()
                 }
