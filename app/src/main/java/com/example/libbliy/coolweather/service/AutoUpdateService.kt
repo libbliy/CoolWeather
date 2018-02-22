@@ -21,7 +21,6 @@ class AutoUpdateService : Service() {
         return null
     }
 
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         updateWeather()
         updateBingPic()
@@ -31,13 +30,13 @@ class AutoUpdateService : Service() {
         val intent1 = Intent(this, AutoUpdateService::class.java)
         val pendingIntent = PendingIntent.getService(this, 0, intent1, 0)
         manager.cancel(pendingIntent)
-        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,pendingIntent)
+        manager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP, triggerAtTime, pendingIntent)
         return super.onStartCommand(intent, flags, startId)
     }
 
     private fun updateBingPic() {
         val requestBingPic = "http://guolin.tech/api/bing_pic"
-        HttpUtil.sendOkHttpRequest(requestBingPic,object: Callback {
+        HttpUtil.sendOkHttpRequest(requestBingPic, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
             }
@@ -45,7 +44,7 @@ class AutoUpdateService : Service() {
             override fun onResponse(call: Call?, response: Response?) {
                 val bingPic = response?.body()!!.string()
                 val editor = PreferenceManager.getDefaultSharedPreferences(this@AutoUpdateService).edit()
-                editor.putString("bing_pic",bingPic)
+                editor.putString("bing_pic", bingPic)
                 editor.apply()
             }
         })
@@ -59,7 +58,7 @@ class AutoUpdateService : Service() {
             val weatherId = weather.basic.weatherId
 
             val weatherUrl = "http://guolin.tech/api/weather?cityid=$weatherId&key=b96e6305b42c45e6a54b52b6bace3867"
-            HttpUtil.sendOkHttpRequest(weatherUrl,object: Callback {
+            HttpUtil.sendOkHttpRequest(weatherUrl, object : Callback {
                 override fun onFailure(call: Call?, e: IOException?) {
                     e?.printStackTrace()
                 }
@@ -69,7 +68,7 @@ class AutoUpdateService : Service() {
                     val weather = JsonHlr.halResponseWeather(responseText)
                     if ("ok" == weather.status) {
                         val editor = PreferenceManager.getDefaultSharedPreferences(this@AutoUpdateService).edit()
-                        editor.putString("weather",responseText)
+                        editor.putString("weather", responseText)
                         editor.apply()
                     }
                 }

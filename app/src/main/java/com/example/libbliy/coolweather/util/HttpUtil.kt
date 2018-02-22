@@ -13,12 +13,8 @@ class HttpUtil {
         fun sendOkHttpRequest(address: String, callback: Callback) {
             val okHttpClient = OkHttpClient()
             val request = Request.Builder().url(address).build()
-            Log.w("request",request.toString())
+            Log.w("request", request.toString())
             okHttpClient.newCall(request).enqueue(callback)
-
-
-
-
         }
     }
 }

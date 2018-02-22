@@ -1,7 +1,6 @@
 package com.example.libbliy.coolweather.gson
 
 import com.google.gson.annotations.SerializedName
-import javax.sql.StatementEvent
 
 /**
  * Created by libbliy on 2018/2/3.

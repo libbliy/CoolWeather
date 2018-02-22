@@ -23,6 +23,5 @@ class Forecast {
     class More {
         @SerializedName("txt_d")
         lateinit var info: String
-
     }
 }

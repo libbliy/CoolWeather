@@ -14,7 +14,6 @@ class Suggestion {
     class CarWash {
         @SerializedName("txt")
         lateinit var info: String
-
     }
 
     lateinit var sport: Sport
@@ -22,12 +21,10 @@ class Suggestion {
     class Sport {
         @SerializedName("txt")
         lateinit var info: String
-
     }
 
     class Comfort {
         @SerializedName("txt")
         lateinit var info: String
     }
-
 }

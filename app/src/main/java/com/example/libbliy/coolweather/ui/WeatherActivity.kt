@@ -27,7 +27,6 @@ import java.io.IOException
 
 class WeatherActivity : AppCompatActivity() {
 
-
     private lateinit var weatherLayout: ScrollView
     private lateinit var titleCity: TextView
     private lateinit var titleUpdateTime: TextView
@@ -41,10 +40,9 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var forecastLayout: LinearLayout
     private lateinit var bingPicImg: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var mWeatherId:String
+    private lateinit var mWeatherId: String
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navButton: Button
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,42 +68,36 @@ class WeatherActivity : AppCompatActivity() {
         sportText = findViewById(R.id.sport_text)
         forecastLayout = findViewById(R.id.forecast_layout)
         bingPicImg = findViewById(R.id.bing_pic_img)
-        swipeRefreshLayout=findViewById(R.id.swipe_refresh)
+        swipeRefreshLayout = findViewById(R.id.swipe_refresh)
         swipeRefreshLayout.setColorSchemeResources(R.color.colorPrimary)
-        drawerLayout=findViewById(R.id.drawer_layout)
-        navButton=findViewById(R.id.nav_button)
-
-        
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navButton = findViewById(R.id.nav_button)
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val weatherString = preferences.getString("weather", null)
         if (weatherString != null) {
             //有缓存直接解析天气数据
             val weather = JsonHlr.halResponseWeather(weatherString)
-            mWeatherId=weather.basic.weatherId
+            mWeatherId = weather.basic.weatherId
             showWeatherInfo(weather)
-
         } else {
             mWeatherId = intent.getStringExtra("weather_id")
             weather_layout.visibility = View.INVISIBLE
             requestWeather(mWeatherId)
         }
-        swipeRefreshLayout.setOnRefreshListener{
+        swipeRefreshLayout.setOnRefreshListener {
                 requestWeather(mWeatherId)
-                Toast.makeText(this@WeatherActivity,"已刷新",Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@WeatherActivity, "已刷新", Toast.LENGTH_SHORT).show()
             }
 
         val bingPic = preferences.getString("bing_pic_img", null)
         if (bingPic != null) {
             Glide.with(this).load(bingPic).into(bingPicImg)
-            Log.w("bingPic",bingPic)
-
+            Log.w("bingPic", bingPic)
         } else {
             loadBingPic()
         }
         navButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
-
-
     }
 
     private fun loadBingPic() {
@@ -117,7 +109,7 @@ class WeatherActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call?, response: Response?) {
                 val bingPic = response?.body()?.string()
-                 Log.w("bingPic",bingPic)   
+                 Log.w("bingPic", bingPic)
                 val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
                 editor.putString("bing_pic", bingPic)
                 editor.apply()
@@ -128,13 +120,13 @@ class WeatherActivity : AppCompatActivity() {
 
     fun requestWeather(weatherId: String) {
         val weatherUri = "http://guolin.tech/api/weather?cityid=$weatherId&key=b96e6305b42c45e6a54b52b6bace3867"
-        mWeatherId=weatherId
+        mWeatherId = weatherId
         HttpUtil.sendOkHttpRequest(weatherUri, object : Callback {
             override fun onFailure(call: Call?, e: IOException?) {
                 e?.printStackTrace()
                 runOnUiThread {
                     Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
-                    swipeRefreshLayout.isRefreshing=false
+                    swipeRefreshLayout.isRefreshing = false
                 }
             }
 
@@ -147,15 +139,13 @@ class WeatherActivity : AppCompatActivity() {
                         editor.putString("weather", response)
                         editor.apply()
                         showWeatherInfo(responseWeather)
-                        swipeRefreshLayout.isRefreshing=false
+                        swipeRefreshLayout.isRefreshing = false
                     } else {
                         Toast.makeText(this@WeatherActivity, "获取天气失败", Toast.LENGTH_SHORT).show()
                     }
                 }
             }
-
         })
-
     }
 
     private fun showWeatherInfo(weather: Weather) {

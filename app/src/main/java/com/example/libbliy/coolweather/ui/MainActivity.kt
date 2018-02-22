@@ -1,9 +1,9 @@
 package com.example.libbliy.coolweather.ui
 
 import android.content.Intent
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.preference.PreferenceManager
+import android.support.v7.app.AppCompatActivity
 import com.example.libbliy.coolweather.R
 
 class MainActivity : AppCompatActivity() {
@@ -14,10 +14,9 @@ class MainActivity : AppCompatActivity() {
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
         val intent = Intent(this, WeatherActivity::class.java)
-        if (preferences.getString("weather",null)!=null) {
+        if (preferences.getString("weather", null) != null) {
             startActivity(intent)
             finish()
         }
     }
-
 }

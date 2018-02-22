@@ -20,16 +20,15 @@ class JsonHlr {
 
             if (!response.isEmpty()) {
                 val allProvince = JSONArray(response)
-                Log.w("jsonArray",allProvince.toString())
+                Log.w("jsonArray", allProvince.toString())
                 try {
                     for (i in 0 until allProvince.length()) {
                         val provinceObject = allProvince.getJSONObject(i)
-                        Log.w("object",provinceObject.toString())
+                        Log.w("object", provinceObject.toString())
                         val province = Province()
                         province.mProvinceName = provinceObject.getString("name")
                         province.mProvinceCode = provinceObject.getInt("id")
                         province.save()
-
                     }
                     return true
                 } catch (e: Exception) {
@@ -37,8 +36,6 @@ class JsonHlr {
                 }
             }
             return false
-
-
         }
 
         fun hdlResponseCity(response: String, provinceId: Int): Boolean {
@@ -59,8 +56,6 @@ class JsonHlr {
                 }
             }
             return false
-
-
         }
 
         fun hdlResponseCounty(response: String, cityId: Int): Boolean {
@@ -81,19 +76,15 @@ class JsonHlr {
                 }
             }
             return false
-
-
         }
 
         fun halResponseWeather(response: String): Weather {
-            Log.w("weatherResponse",response)
+            Log.w("weatherResponse", response)
             val jsonObject = JSONObject(response)
             val jsonArray = jsonObject.getJSONArray("HeWeather")
             val weatherContent = jsonArray.getJSONObject(0).toString()
-            Log.w("weatherCOUNT",weatherContent)
+            Log.w("weatherCOUNT", weatherContent)
             return Gson().fromJson(weatherContent, Weather::class.java)
         }
-
-
     }
 }
