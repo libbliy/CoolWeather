@@ -49,11 +49,10 @@
         </android.support.v4.widget.SwipeRefreshLayout>
 
 
-        <fragment
-            android:id="@+id/choose_area_fragment"
+        <FrameLayout
+            android:id="@+id/contentFrame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:name="com.example.libbliy.coolweather.ui.ChooseAreaFragment"
             android:layout_gravity="start"
             />
 

@@ -1,9 +1,10 @@
 package com.example.libbliy.coolweather.util
 
 import android.util.Log
-import com.example.libbliy.coolweather.db.City
-import com.example.libbliy.coolweather.db.County
-import com.example.libbliy.coolweather.db.Province
+import com.example.libbliy.coolweather.data.City
+import com.example.libbliy.coolweather.data.County
+import com.example.libbliy.coolweather.data.Dao
+import com.example.libbliy.coolweather.data.Province
 import com.example.libbliy.coolweather.gson.Weather
 import com.google.gson.Gson
 import org.json.JSONArray
@@ -15,6 +16,7 @@ import org.json.JSONObject
 class JsonHlr {
 
     companion object {
+        lateinit var dao: Dao
 
         fun hdlResponseProvince(response: String): Boolean {
 
@@ -25,10 +27,8 @@ class JsonHlr {
                     for (i in 0 until allProvince.length()) {
                         val provinceObject = allProvince.getJSONObject(i)
                         Log.w("object", provinceObject.toString())
-                        val province = Province()
-                        province.mProvinceName = provinceObject.getString("name")
-                        province.mProvinceCode = provinceObject.getInt("id")
-                        province.save()
+                        val province = Province(provinceObject.getString("name"), provinceObject.getInt("id"))
+                        dao.insertProvince(province)
                     }
                     return true
                 } catch (e: Exception) {
@@ -44,11 +44,8 @@ class JsonHlr {
                 try {
                     for (i in 0 until allCitties.length()) {
                         val cityObject = allCitties.getJSONObject(i)
-                        val city = City()
-                        city.mCityName = cityObject.getString("name")
-                        city.mCityCode = cityObject.getInt("id")
-                        city.mProvinceId = provinceId
-                        city.save()
+                        val city = City(provinceId, cityObject.getString("name"), cityObject.getInt("id"))
+                        dao.insertCity(city)
                     }
                     return true
                 } catch (e: Exception) {
@@ -64,11 +61,12 @@ class JsonHlr {
                 try {
                     for (i in 0 until allCounties.length()) {
                         val countyObject = allCounties.getJSONObject(i)
-                        val county = County()
-                        county.mCountyName = countyObject.getString("name")
-                        county.mWeatherId = countyObject.getString("weather_id")
-                        county.mCityId = cityId
-                        county.save()
+                        val county = County(cityId
+                                , countyObject.getString("name")
+                                , countyObject.getString("weather_id")
+                        , countyObject.getInt("id")
+                        )
+                        dao.insertCounty(county)
                     }
                     return true
                 } catch (e: Exception) {

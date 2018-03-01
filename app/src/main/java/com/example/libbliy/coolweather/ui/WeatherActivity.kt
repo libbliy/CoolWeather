@@ -14,11 +14,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
+import com.example.libbliy.coolweather.In
 import com.example.libbliy.coolweather.R
 import com.example.libbliy.coolweather.gson.Weather
 import com.example.libbliy.coolweather.service.AutoUpdateService
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
+import com.example.libbliy.coolweather.util.replaceFragmentInActivity
 import kotlinx.android.synthetic.main.activity_weather.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -43,6 +45,11 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var mWeatherId: String
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navButton: Button
+//    init {
+//        val addEditTaskFragment =
+//                supportFragmentManager.findFragmentById(R.id.choose_area_fragment) as ChooseAreaFragment
+//        addEditTaskFragment.dao = In.pr(this).getDao()
+//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,6 +62,17 @@ class WeatherActivity : AppCompatActivity() {
             window.statusBarColor = Color.TRANSPARENT
         }
         setContentView(R.layout.activity_weather)
+
+        val taskId = intent.getStringExtra(ChooseAreaFragment.ARGUMENT_EDIT_TASK_ID)
+
+        val chooseAreaFragment =
+                fragmentManager.findFragmentById(R.id.contentFrame) as ChooseAreaFragment?
+                        ?: ChooseAreaFragment.newInstance(taskId).also {
+                            replaceFragmentInActivity(it, R.id.contentFrame)
+                        }
+
+        chooseAreaFragment.dao = In.pr(this).getDao()
+        JsonHlr.dao = In.pr(this).getDao()
 
         weatherLayout = findViewById(R.id.weather_layout)
         titleCity = findViewById(R.id.title_city)
@@ -86,9 +104,9 @@ class WeatherActivity : AppCompatActivity() {
             requestWeather(mWeatherId)
         }
         swipeRefreshLayout.setOnRefreshListener {
-                requestWeather(mWeatherId)
-                Toast.makeText(this@WeatherActivity, "已刷新", Toast.LENGTH_SHORT).show()
-            }
+            requestWeather(mWeatherId)
+            Toast.makeText(this@WeatherActivity, "已刷新", Toast.LENGTH_SHORT).show()
+        }
 
         val bingPic = preferences.getString("bing_pic_img", null)
         if (bingPic != null) {
@@ -109,7 +127,7 @@ class WeatherActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call?, response: Response?) {
                 val bingPic = response?.body()?.string()
-                 Log.w("bingPic", bingPic)
+                Log.w("bingPic", bingPic)
                 val editor = PreferenceManager.getDefaultSharedPreferences(this@WeatherActivity).edit()
                 editor.putString("bing_pic", bingPic)
                 editor.apply()

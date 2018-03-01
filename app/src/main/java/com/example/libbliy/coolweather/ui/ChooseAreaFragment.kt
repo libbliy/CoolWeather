@@ -9,9 +9,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import com.example.libbliy.coolweather.R
-import com.example.libbliy.coolweather.db.City
-import com.example.libbliy.coolweather.db.County
-import com.example.libbliy.coolweather.db.Province
+import com.example.libbliy.coolweather.data.City
+import com.example.libbliy.coolweather.data.County
+import com.example.libbliy.coolweather.data.Dao
+import com.example.libbliy.coolweather.data.Province
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
 import kotlinx.android.synthetic.main.activity_weather.*
@@ -41,6 +42,7 @@ class ChooseAreaFragment : Fragment() {
     private lateinit var selectedCity: City
     private lateinit var selectedCounty: County
     private var currentLevel: Int = 0
+    lateinit var dao: Dao
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View {
         val view: View = inflater!!.inflate(R.layout.choose_area, container, false)
@@ -68,7 +70,7 @@ class ChooseAreaFragment : Fragment() {
                 val weatherId = selectedCounty.mWeatherId
                 if (activity is MainActivity) {
                     val intent = Intent(activity, WeatherActivity::class.java)
-                    intent.putExtra("weather_id", weatherId )
+                    intent.putExtra("weather_id", weatherId)
                     startActivity(intent)
                     activity.finish()
                 } else if (activity is WeatherActivity) {
@@ -93,60 +95,80 @@ class ChooseAreaFragment : Fragment() {
         titleText.text = "中国"
         backButton.visibility = View.GONE
         //DataSupport.deleteAll(Province::class.java)
-        provinceList = DataSupport.findAll(Province::class.java)
+//        diskIo.execute {
+//            val a = prins.getAllProvince()
+//            Run
+//            da(a)
+//            Log.w("asdasd",(provinceList==null).toString())
+//        }
+        Thread(Runnable {
+            provinceList = dao.getAllProvince()
+            activity.runOnUiThread {
 
-        if (provinceList.isNotEmpty()) {
-            dataList.clear()
-            for (province in provinceList) {
-                dataList.add(province.mProvinceName)
+                if (provinceList.isNotEmpty()) {
+                    dataList.clear()
+                    for (province in provinceList) {
+                        dataList.add(province.mProvinceName)
+                    }
+                    adapter.notifyDataSetChanged()
+                    listView.setSelection(0)
+                    currentLevel = LENCEL_PROVINCE
+                } else {
+                    val address = "http://guolin.tech/api/china"
+                    queryFromServer(address, "province")
+                }
             }
-            adapter.notifyDataSetChanged()
-            listView.setSelection(0)
-            currentLevel = LENCEL_PROVINCE
-        } else {
-            val address = "http://guolin.tech/api/china"
-            queryFromServer(address, "province")
-        }
+        }).start()
     }
 
     private fun queryCities() {
         titleText.text = selectedProvince.mProvinceName
         backButton.visibility = View.VISIBLE
-        cityList = DataSupport.where("mprovinceid=?", selectedProvince.mProvinceCode.toString()).find(City::class.java)
-        if (cityList.isNotEmpty()) {
-            dataList.clear()
-            for (cityList in cityList) {
-                dataList.add(cityList.mCityName)
+        Thread(Runnable {
+            cityList = dao.getCity(selectedProvince.mProvinceCode)
+            activity.runOnUiThread {
+                if (cityList.isNotEmpty()) {
+                    dataList.clear()
+                    for (cityList in cityList) {
+                        dataList.add(cityList.mCityName)
+                    }
+                    adapter.notifyDataSetChanged()
+                    listView.setSelection(0)
+                    currentLevel = LENCEL_CITY
+                } else {
+                    val provinceCode = selectedProvince.mProvinceCode
+                    val address = "http://guolin.tech/api/china/" + provinceCode
+                    queryFromServer(address, "city")
+                }
             }
-            adapter.notifyDataSetChanged()
-            listView.setSelection(0)
-            currentLevel = LENCEL_CITY
-        } else {
-            val provinceCode = selectedProvince.mProvinceCode
-            val address = "http://guolin.tech/api/china/" + provinceCode
-            queryFromServer(address, "city")
-        }
+        }).start()
     }
 
     private fun queryCounties() {
         titleText.text = selectedCity.mCityName
         backButton.visibility = View.VISIBLE
-        countyList = DataSupport.where("mcityid=?", selectedCity.mCityCode.toString()).find(County::class.java)
-        when {
-            countyList.isNotEmpty() -> {
-                dataList.clear()
-                countyList.forEach { dataList.add(it.mCountyName) }
-                adapter.notifyDataSetChanged()
-                listView.setSelection(0)
-                currentLevel = LENCEL_COUNTY
+        Thread(Runnable {
+
+            countyList = dao.getCounty(selectedCity.mCityCode)
+            activity.runOnUiThread {
+
+                when {
+                    countyList.isNotEmpty() -> {
+                        dataList.clear()
+                        countyList.forEach { dataList.add(it.mCountyName) }
+                        adapter.notifyDataSetChanged()
+                        listView.setSelection(0)
+                        currentLevel = LENCEL_COUNTY
+                    }
+                    else -> {
+                        val provinceCode = selectedProvince.mProvinceCode
+                        val cityCode = selectedCity.mCityCode
+                        val address = "http://guolin.tech/api/china/$provinceCode/$cityCode"
+                        queryFromServer(address, "county")
+                    }
+                }
             }
-            else -> {
-                val provinceCode = selectedProvince.mProvinceCode
-                val cityCode = selectedCity.mCityCode
-                val address = "http://guolin.tech/api/china/$provinceCode/$cityCode"
-                queryFromServer(address, "county")
-            }
-        }
+        }).start()
     }
 
     private fun queryFromServer(address: String, type: String) {
@@ -188,5 +210,14 @@ class ChooseAreaFragment : Fragment() {
         const val LENCEL_PROVINCE = 0
         const val LENCEL_CITY = 1
         const val LENCEL_COUNTY = 2
+
+        const val ARGUMENT_EDIT_TASK_ID = "EDIT_TASK_ID"
+
+        fun newInstance(taskId: String?) =
+                ChooseAreaFragment().apply {
+                    arguments = Bundle().apply {
+                        putString(ChooseAreaFragment.ARGUMENT_EDIT_TASK_ID, taskId)
+                    }
+                }
     }
 }
