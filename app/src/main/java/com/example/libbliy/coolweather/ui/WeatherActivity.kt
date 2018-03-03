@@ -45,11 +45,6 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var mWeatherId: String
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navButton: Button
-//    init {
-//        val addEditTaskFragment =
-//                supportFragmentManager.findFragmentById(R.id.choose_area_fragment) as ChooseAreaFragment
-//        addEditTaskFragment.dao = In.pr(this).getDao()
-//    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -71,7 +66,7 @@ class WeatherActivity : AppCompatActivity() {
                             replaceFragmentInActivity(it, R.id.contentFrame)
                         }
 
-        chooseAreaFragment.dao = In.pr(this).getDao()
+        val cityPresenter=CityPresenter(In.pr(this).getDao(),chooseAreaFragment)
         JsonHlr.dao = In.pr(this).getDao()
 
         weatherLayout = findViewById(R.id.weather_layout)

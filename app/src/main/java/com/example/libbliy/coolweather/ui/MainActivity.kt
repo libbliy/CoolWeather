@@ -25,7 +25,7 @@ class MainActivity : AppCompatActivity() {
                         }
         Log.w("test", "test")
 
-        chooseAreaFragment.dao = In.pr(this).getDao()
+        val cityPresenter=CityPresenter(In.pr(this).getDao(),chooseAreaFragment)
         JsonHlr.dao = In.pr(this).getDao()
 
         val preferences = PreferenceManager.getDefaultSharedPreferences(this)
