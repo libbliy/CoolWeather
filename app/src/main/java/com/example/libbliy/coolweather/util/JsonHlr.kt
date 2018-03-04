@@ -40,10 +40,10 @@ class JsonHlr {
 
         fun hdlResponseCity(response: String, provinceId: Int): Boolean {
             if (!response.isEmpty()) {
-                val allCitties = JSONArray(response)
+                val allCities = JSONArray(response)
                 try {
-                    for (i in 0 until allCitties.length()) {
-                        val cityObject = allCitties.getJSONObject(i)
+                    for (i in 0 until allCities.length()) {
+                        val cityObject = allCities.getJSONObject(i)
                         val city = City(provinceId, cityObject.getString("name"), cityObject.getInt("id"))
                         dao.insertCity(city)
                     }

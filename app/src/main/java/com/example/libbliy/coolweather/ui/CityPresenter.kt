@@ -10,7 +10,6 @@ import com.example.libbliy.coolweather.data.Province
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
 import okhttp3.Call
-import okhttp3.Callback
 import okhttp3.Response
 import java.io.IOException
 import java.util.concurrent.Executor
@@ -33,7 +32,7 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
     }
 
     fun queryProvinces() {
-        getAllProvince(1, object : Callack {
+        getAllProvince(1, object : Callback {
             override fun onMain(allProvince: List<Any>) {
                 provinceList = allProvince as List<Province>
                 if (provinceList.isNotEmpty()) {
@@ -53,7 +52,7 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
     }
 
     fun queryCities() {
-        getAllProvince(2, object : Callack {
+        getAllProvince(2, object : Callback {
             override fun onMain(allProvince: List<Any>) {
                 cityList= allProvince as List<City>
                 when {
@@ -76,14 +75,14 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
     }
 
     fun queryCounties() {
-        getAllProvince(3,object: Callack {
+        getAllProvince(3, object : Callback {
             override fun onMain(allProvince: List<Any>) {
                 countyList= allProvince as List<County>
                 when {
                     countyList.isNotEmpty() -> {
                         dataList.clear()
                         countyList.forEach { dataList.add(it.mCountyName) }
-                        fragment.showCouryList(selectedCity)
+                        fragment.showCountyList(selectedCity)
                         currentLevel = ChooseAreaFragment.LENCEL_COUNTY
                     }
                     else -> {
@@ -98,11 +97,11 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
     }
 
     private fun queryFromServer(address: String, type: String) {
-        fragment.showProgessBar()
+        fragment.showProgressBar()
 
         HttpUtil.sendOkHttpRequest(
                 address,
-                object : Callback {
+                object : okhttp3.Callback {
                     override fun onFailure(call: Call?, e: IOException?) {
                         mainThread.execute {
                             fragment.showFail()
@@ -140,7 +139,7 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
     private val mainThread = MainThreadExecutor()
 
 
-    private fun getAllProvince(int: Int, callback: Callack) = Thread {
+    private fun getAllProvince(int: Int, callback: Callback) = Thread {
         val allProvince = when (int) {
             1 -> dao.getAllProvince()
 
@@ -166,15 +165,15 @@ class CityPresenter(val dao: Dao, val fragment: ChooseAreaFragment) {
 
     }
 
-    private interface Callack {
+    private interface Callback {
 
-        fun onMain(allProvince: List<Any>): Unit
+        fun onMain(allProvince: List<Any>)
 
     }
 
     fun getWeatherId(position: Int) = countyList[position].mWeatherId
 
-    fun toCounyList(position: Int) {
+    fun toCountyList(position: Int) {
         Log.w("currentLevel","a")
         selectedCity = cityList[position]
         queryCounties()

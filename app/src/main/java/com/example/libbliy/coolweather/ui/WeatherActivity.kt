@@ -42,9 +42,10 @@ class WeatherActivity : AppCompatActivity() {
     private lateinit var forecastLayout: LinearLayout
     private lateinit var bingPicImg: ImageView
     private lateinit var swipeRefreshLayout: SwipeRefreshLayout
-    private lateinit var mWeatherId: String
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var navButton: Button
+
+    private lateinit var mWeatherId: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

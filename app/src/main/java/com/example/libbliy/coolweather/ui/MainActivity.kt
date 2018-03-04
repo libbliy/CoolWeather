@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.support.v7.app.AppCompatActivity
-import android.util.Log
 import com.example.libbliy.coolweather.In
 import com.example.libbliy.coolweather.R
 import com.example.libbliy.coolweather.util.JsonHlr
@@ -17,13 +16,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         val taskId = intent.getStringExtra(ChooseAreaFragment.ARGUMENT_EDIT_TASK_ID)
 
-        Log.w("test", "txxxt")
         val chooseAreaFragment =
                 fragmentManager.findFragmentById(R.id.contentFrame) as ChooseAreaFragment?
                         ?: ChooseAreaFragment.newInstance(taskId).also {
                             replaceFragmentInActivity(it, R.id.contentFrame)
                         }
-        Log.w("test", "test")
 
         val cityPresenter=CityPresenter(In.pr(this).getDao(),chooseAreaFragment)
         JsonHlr.dao = In.pr(this).getDao()

@@ -17,7 +17,7 @@ import kotlinx.android.synthetic.main.activity_weather.*
  */
 class ChooseAreaFragment : Fragment() {
 
-    lateinit var progressBar: ProgressBar //'ProgressDialog' is deprecated. Deprecated in Java
+    private lateinit var progressBar: ProgressBar //'ProgressDialog' is deprecated. Deprecated in Java
     private lateinit var titleText: TextView
     private lateinit var backButton: Button
     private lateinit var listView: ListView
@@ -51,7 +51,7 @@ class ChooseAreaFragment : Fragment() {
                     cityPresenter.toCityList(position)
                 }
                 LENCEL_CITY -> {
-                    cityPresenter.toCounyList(position)
+                    cityPresenter.toCountyList(position)
                 }
                 LENCEL_COUNTY -> {
 
@@ -91,7 +91,8 @@ class ChooseAreaFragment : Fragment() {
          adapter.notifyDataSetChanged()
         listView.setSelection(0)
     }
-    fun showCouryList(selectedCity: City) {
+
+    fun showCountyList(selectedCity: City) {
         titleText.text = selectedCity.mCityName
         backButton.visibility = View.VISIBLE
         adapter.notifyDataSetChanged()
@@ -107,7 +108,7 @@ class ChooseAreaFragment : Fragment() {
 
     }
 
-    fun showProgessBar() {
+    fun showProgressBar() {
 
         progressBar.visibility = View.VISIBLE
     }
