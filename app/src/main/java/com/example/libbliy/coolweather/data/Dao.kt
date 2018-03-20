@@ -10,9 +10,9 @@ import android.arch.persistence.room.Query
 @Dao interface Dao {
     @Query("SELECT * FROM Province") fun getAllProvince(): List<Province>
 
-    @Query("SELECT * FROM City WHERE mProvinceId = :arg0") fun getCity(provinceId: Int): List<City>
+    @Query("SELECT * FROM City WHERE mProvinceId = :provinceId") fun getCity(provinceId: Int): List<City>
 
-    @Query("SELECT * FROM County WHERE mCityId = :arg0") fun getCounty(cityId: Int): List<County>
+    @Query("SELECT * FROM County WHERE mCityId = :cityId") fun getCounty(cityId: Int): List<County>
 
     @Insert fun insertCity(city: City)
 
