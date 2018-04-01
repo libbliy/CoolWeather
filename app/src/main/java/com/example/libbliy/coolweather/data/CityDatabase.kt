@@ -10,7 +10,7 @@ import android.content.Context
  */
 @Database(entities = [City::class, Province::class, County::class], version = 1)
 abstract class CityDatabase : RoomDatabase() {
-    abstract fun getDao(): Dao
+    abstract fun getDao(): AreaDao
 
     companion object {
         fun getInstance(context: Context): CityDatabase = Room.databaseBuilder(context.applicationContext, CityDatabase::class.java, "city.db").build()

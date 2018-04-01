@@ -14,13 +14,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.*
 import com.bumptech.glide.Glide
-import com.example.libbliy.coolweather.In
 import com.example.libbliy.coolweather.R
 import com.example.libbliy.coolweather.gson.Weather
 import com.example.libbliy.coolweather.service.AutoUpdateService
 import com.example.libbliy.coolweather.util.HttpUtil
 import com.example.libbliy.coolweather.util.JsonHlr
-import com.example.libbliy.coolweather.util.replaceFragmentInActivity
 import kotlinx.android.synthetic.main.activity_weather.*
 import okhttp3.Call
 import okhttp3.Callback
@@ -61,14 +59,13 @@ class WeatherActivity : AppCompatActivity() {
 
         val taskId = intent.getStringExtra(ChooseAreaFragment.ARGUMENT_EDIT_TASK_ID)
 
-        val chooseAreaFragment =
-                fragmentManager.findFragmentById(R.id.contentFrame) as ChooseAreaFragment?
-                        ?: ChooseAreaFragment.newInstance(taskId).also {
-                            replaceFragmentInActivity(it, R.id.contentFrame)
-                        }
-
-        val cityPresenter=CityPresenter(In.pr(this).getDao(),chooseAreaFragment)
-        JsonHlr.dao = In.pr(this).getDao()
+//        val chooseAreaFragment =
+//                fragmentManager.findFragmentById(R.id.contentFrame) as ChooseAreaFragment?
+//                        ?: ChooseAreaFragment.newInstance(taskId).also {
+//                            replaceFragmentInActivity(it, R.id.contentFrame)
+//                        }
+//
+//        JsonHlr.areaDao = In.pr(this).getDao()
 
         weatherLayout = findViewById(R.id.weather_layout)
         titleCity = findViewById(R.id.title_city)
@@ -112,6 +109,22 @@ class WeatherActivity : AppCompatActivity() {
             loadBingPic()
         }
         navButton.setOnClickListener { drawerLayout.openDrawer(GravityCompat.START) }
+
+        weather_nav_view.setNavigationItemSelectedListener {
+            when (it.itemId) {
+
+                R.id.choose_area_navigation_menu_item -> {
+                    preferences.edit().clear().apply()
+                    val intent = Intent(this, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
+                }
+            }
+
+            drawerLayout.closeDrawers()
+
+            true
+        }
     }
 
     private fun loadBingPic() {

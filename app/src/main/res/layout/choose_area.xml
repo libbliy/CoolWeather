@@ -1,40 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="android.view.View" />
+
+
+        <variable
+            name="model"
+            type="com.example.libbliy.coolweather.ui.ChooseAreaViewModel" />
+    </data>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#fff"
 
     >
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/title_text"
-            android:layout_centerInParent="true"
-            android:textColor="#fff"
-            android:textSize="20sp"/>
-        <Button
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:id="@+id/back_button"
-            android:layout_marginLeft="10dp"
-            android:layout_alignParentLeft="true"
-            android:layout_centerVertical="true"
-            />
-    </RelativeLayout>
+    <!--<RelativeLayout-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--&gt;-->
+    <!---->
+    <!--<TextView-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:id="@+id/title_text"-->
+    <!--android:layout_centerInParent="true"-->
+    <!--android:textColor="#fff"-->
+    <!--android:textSize="20sp"-->
+    <!--android:text="@{model.tiltle}"-->
+    <!--/>-->
+    <!--<Button-->
+    <!--android:layout_width="25dp"-->
+    <!--android:layout_height="25dp"-->
+    <!--android:id="@+id/back_button"-->
+    <!--android:layout_marginLeft="10dp"-->
+    <!--android:layout_alignParentLeft="true"-->
+    <!--android:layout_centerVertical="true"-->
+    <!--android:onClickListener="@{model.backButtonListenter(model.flag)}"-->
+    <!--/>-->
+    <!--</RelativeLayout>-->
     <ProgressBar
         android:id="@+id/progress_bar"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="gone"/>
-    <ListView
+        android:visibility="@{model.visibility ? View.VISIBLE : View.GONE}" />
+
+    <android.support.v7.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/list_view"
-        />
+        android:adapter="@{model.getAdapter(model.areaListData)}"
+        app:layoutManager="LinearLayoutManager" />
 </LinearLayout>
+</layout>

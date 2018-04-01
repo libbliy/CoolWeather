@@ -1,9 +1,9 @@
 package com.example.libbliy.coolweather.util
 
 import android.util.Log
+import com.example.libbliy.coolweather.data.AreaDao
 import com.example.libbliy.coolweather.data.City
 import com.example.libbliy.coolweather.data.County
-import com.example.libbliy.coolweather.data.Dao
 import com.example.libbliy.coolweather.data.Province
 import com.example.libbliy.coolweather.gson.Weather
 import com.google.gson.Gson
@@ -16,7 +16,7 @@ import org.json.JSONObject
 class JsonHlr {
 
     companion object {
-        lateinit var dao: Dao
+        lateinit var areaDao: AreaDao
 
         fun hdlResponseProvince(response: String): Boolean {
 
@@ -26,9 +26,8 @@ class JsonHlr {
                 try {
                     for (i in 0 until allProvince.length()) {
                         val provinceObject = allProvince.getJSONObject(i)
-                        Log.w("object", provinceObject.toString())
                         val province = Province(provinceObject.getString("name"), provinceObject.getInt("id"))
-                        dao.insertProvince(province)
+                        areaDao.insertProvince(province)
                     }
                     return true
                 } catch (e: Exception) {
@@ -45,7 +44,7 @@ class JsonHlr {
                     for (i in 0 until allCities.length()) {
                         val cityObject = allCities.getJSONObject(i)
                         val city = City(provinceId, cityObject.getString("name"), cityObject.getInt("id"))
-                        dao.insertCity(city)
+                        areaDao.insertCity(city)
                     }
                     return true
                 } catch (e: Exception) {
@@ -66,7 +65,7 @@ class JsonHlr {
                                 , countyObject.getString("weather_id")
                         , countyObject.getInt("id")
                         )
-                        dao.insertCounty(county)
+                        areaDao.insertCounty(county)
                     }
                     return true
                 } catch (e: Exception) {

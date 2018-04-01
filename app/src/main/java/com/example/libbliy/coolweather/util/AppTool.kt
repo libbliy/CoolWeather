@@ -3,12 +3,12 @@ package com.example.libbliy.coolweather.util
 /**
  * Created by libbliy on 2018/2/27.
  */
-import android.app.Fragment
-import android.app.FragmentManager
-import android.app.FragmentTransaction
 import android.os.Handler
 import android.os.Looper
 import android.support.annotation.IdRes
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentTransaction
 import android.support.v7.app.ActionBar
 import android.support.v7.app.AppCompatActivity
 import java.util.concurrent.Executor
@@ -18,7 +18,7 @@ import java.util.concurrent.Executor
  * performed by the `fragmentManager`.
  */
 fun AppCompatActivity.replaceFragmentInActivity(fragment: Fragment, @IdRes frameId: Int) {
-    fragmentManager.transact {
+    supportFragmentManager.transact {
         replace(frameId, fragment)
     }
 }
@@ -28,7 +28,7 @@ fun AppCompatActivity.replaceFragmentInActivity(fragment: Fragment, @IdRes frame
  * performed by the `fragmentManager`.
  */
 fun AppCompatActivity.addFragmentToActivity(fragment: Fragment, tag: String) {
-    fragmentManager.transact {
+    supportFragmentManager.transact {
         add(fragment, tag)
     }
 }
